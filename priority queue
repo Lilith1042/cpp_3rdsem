@@ -1,0 +1,124 @@
+#include <iostream>
+
+using namespace std;
+
+template<class T>
+class priority_queue {
+
+private:
+    T* buffer;
+    int* prior;
+    int count;
+
+public:
+    priority_queue() {
+        count = 0;
+    }
+
+    void push(T item, int priority);
+    T pop();
+    void print();
+};
+template <typename T>
+void priority_queue<T>::push(T item, int priority)
+{
+    T* buffer2;
+    int* prior2;
+
+    buffer2 = (T*)new T[count + 1];
+    prior2 = (int*)new int[count + 1];
+    
+    int pos;
+
+    if (count == 0)
+        pos = 0;
+    else
+    {
+        pos = 0;
+        while (pos < count)
+        {
+            if (prior[pos] < priority) break;
+            pos++;
+        }
+    }
+
+    for (int i = 0; i < pos; i++)
+    {
+        buffer2[i] = buffer[i];
+        prior2[i] = prior[i];
+    }
+
+    buffer2[pos] = item;
+    prior2[pos] = priority;
+
+    for (int i = pos + 1; i < count + 1; i++)
+    {
+        buffer2[i] = buffer[i - 1];
+        prior2[i] = prior[i - 1];
+    }
+
+    
+    if (count > 0)
+    {
+        delete[] buffer;
+        delete[] prior;
+    }
+
+    buffer = buffer2;
+    prior = prior2;
+
+    count++;
+}
+
+template <typename T>
+T priority_queue<T>::pop()
+{
+    if (count == 0)
+        return 0;
+
+    T* buffer2;
+    int* prior2;
+
+    buffer2 = new T[count - 1];
+    prior2 = new int[count - 1];
+
+    T item;
+    item = buffer[0];
+
+    for (int i = 0; i < count - 1; i++)
+    {
+        buffer2[i] = buffer[i + 1];
+        prior2[i] = prior[i + 1];
+    }
+
+    if (count > 0)
+    {
+        delete[] buffer;
+        delete[] prior;
+    }
+
+    count--;
+
+    buffer = buffer2;
+    prior = prior2;
+
+    return item;
+}
+
+template <typename T>
+void priority_queue<T>::print()
+{
+    for (int i = 0; i < count; i++)
+        cout << buffer[i] << ":" << prior[i] << "\t" << endl;
+    cout << endl;
+}
+
+int main()
+{
+    priority_queue<float> arr;
+	arr.push(6.0, 2);
+    arr.push(7.0, 3);
+    arr.push(12.0, 4);
+    arr.push(41.0, 1);
+    arr.print();
+}
